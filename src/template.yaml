@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Serverless Specification template describing your function.
+Globals:
+  Function:
+    Timeout: 3
+Parameters:
+  DomainName:
+    Type: String
+    Default: github-tags.kaotue.com
+  GitHubApiUserName:
+    Type: String
+    Default: defaultusernamevalue
+  GitHubApiToken:
+    Type: String
+    Default: defaulttokenvalue
+Resources:
+  GitHubYourTagsApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: github-yourtags-api
+      CodeUri: src/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures: [x86_64]
+      Timeout: 60
+      MemorySize: 1024
+      Environment:
+        Variables:
+          GITHUB_API_USER_NAME: !Ref GitHubApiUserName
+          GITHUB_API_TOKEN: !Ref GitHubApiToken
+      Events:
+        ApiRoot:
+          Type: Api
+          Properties:
+            Path: '/'
+            Method: ANY
+            RestApiId: !Ref GitHubYourTagsApi
+        ApiProxy:
+          Type: Api
+          Properties:
+            Path: '/{proxy+}'
+            Method: ANY
+            RestApiId: !Ref GitHubYourTagsApi
+  GitHubYourTagsApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      OpenApiVersion: 3.0.2
+      Name: github-yourtags-api
+  GitHubYourTagsApiGatewaBasePathMapping:
+    Type: AWS::ApiGatewayV2::ApiMapping
+    Properties:
+      DomainName: !Ref DomainName
+      ApiId: !Ref GitHubYourTagsApi
+      Stage: !Ref GitHubYourTagsApi.Stage
+Outputs:
+  GitHubYourTagsApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${DomainName}/"
+  GitHubYourTagsApiFunction:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt GitHubYourTagsApiFunction.Arn
+  GitHubYourTagsApiFunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt GitHubYourTagsApiFunctionRole.Arn
+    
