@@ -48,6 +48,11 @@ Resources:
       StageName: Prod
       OpenApiVersion: 3.0.2
       Name: github-yourtags-api
+      MethodSettings:
+      - HttpMethod: '*'
+        ResourcePath: '/*'
+        ThrottlingBurstLimit: 3
+        ThrottlingRateLimit: 3
   GitHubYourTagsApiGatewaBasePathMapping:
     Type: AWS::ApiGatewayV2::ApiMapping
     Properties:
