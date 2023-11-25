@@ -9,7 +9,7 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-@app.route('/user/<user>', methods=['GET'])
+@app.route('/users/<user>', methods=['GET'])
 def get_tags(user):
     print(f'{user=}')
     tags = create_tags.run(user)

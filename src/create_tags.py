@@ -17,6 +17,7 @@ def run(user_name: str) -> list:
     if not downloader.results:
         return None
 
+    print(downloader.results)
     urls = [x.get('languages_url') for x in downloader.results[0]]
     downloader = github_api.GitHubDownloader(urls)
     downloader.run()
